@@ -8,16 +8,16 @@ Firstly, let's forget about React and write a simple pub/sub library that gives 
 
 - We have to write a function that accepts two methods (magically implemented and provided by the library, for now), *getState* and *merge*. They are justified in the following way: to modify the state, we have to both know the current state, hence *getState*, but also specify the changes, hence *merge*, which takes a new object literal and merges it into the current state using the spread operator. So, we are expected to write a method like this:
   ```js
-  const counterStore = (getState, merge) => {
-  	return {
-  		operations: 0,
-  		count: 0,
-  		add() {
-  			merge({operations: getState().operations + 1, count: getState().count + 1});
-  		},
-  		subtract() {
-  			merge({operations: getState().operations + 1, count: getState().count - 1});
-  		}
-  	};
-  }
+  const counterStore = (getState, merge) => ({
+    operations: 0,
+    count:      0,
+    add() {
+      const { operations, count } = getState();
+      merge({ operations: operations + 1, count: count + 1 });
+    },
+    subtract() {
+      const { operations, count } = getState();
+      merge({ operations: operations + 1, count: count - 1 });
+    }
+  });
   ```
