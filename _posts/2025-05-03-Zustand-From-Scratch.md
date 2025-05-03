@@ -51,7 +51,7 @@ We now have basic ingredients: a store for internal state, a way to update/patch
 - using **useState** hook and *selector* function provided, we describe a resulting state slice for the component.
 - using **useEffect**, we create a listener to the store that gets notified when something changes and updates the component state accordingly. Inside **useEffect** hook, we have to also clean up the subscription
 
-Those steps can be incorporated in the following way to improve the library. It should now support React (It has a bug, can you guess what?):
+Those steps can be incorporated in the following way to improve the library. It should now support React (It has a bug. can you guess what is is?):
 ```js
 
 ```
