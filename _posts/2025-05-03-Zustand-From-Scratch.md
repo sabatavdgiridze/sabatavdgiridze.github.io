@@ -53,6 +53,41 @@ We now have basic ingredients: a store for internal state, a way to update/patch
 
 Those steps can be incorporated in the following way to improve the library. It should now support React (It has a bug. can you guess what is is?):
 ```js
-
+  function createStore(initFn) {
+    let listeners = [];
+    let state;
+  
+    const getState = () => state;
+    const merge = patch => {
+      state = { ...state, ...patch };
+      listeners.forEach(fn => fn(state));
+    };
+  
+    // initialize your state/store object
+    state = initFn(getState, merge);
+  
+    return (selector, dependencies) => {
+    	// to make changes in selected slice, we have to use provided methods in the store we wrote ourselves. Hence const below
+    	const selected = selector(state)
+    	// Here, selected could be a method.
+      // The way React works, if it sees the method inside useState hook it evaluates and its result becomes the value of the state.
+      // We don't want that. Hence () => selected
+    	const [slice, setSlice] = useState(() => selected)
+    	
+    	useEffect(() => {
+    		const listener = () => {
+    			const newSlice = selector(state);
+    			setSlice(() => newSlice);
+    		}
+    		
+    		listeners.push(listener);
+    		// unsubscribe method given to useEffect
+    		return () => {
+    			listeners = listeners.filter(l => l !== listener)
+    		}
+    	}, dependencies || [selector])
+    	return selected;
+    }
+  }
 ```
 
