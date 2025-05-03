@@ -10,7 +10,7 @@ Firstly, let's forget about React and write a simple pub/sub library that gives 
   ```js
   const counterStore = (getState, merge) => ({
     operations: 0,
-    count:      0,
+    count: 0,
     add() {
       const { operations, count } = getState();
       merge({ operations: operations + 1, count: count + 1 });
@@ -20,4 +20,28 @@ Firstly, let's forget about React and write a simple pub/sub library that gives 
       merge({ operations: operations + 1, count: count - 1 });
     }
   });
+  ```
+- The library should accept such description and provide the implementations of *getState* and *merge*. The letter should also notify all the listeners that something has changed and therefore we have to provide the functionality for both subscribing and unsubscribing to those changes. This very simple library could be written like this:
+  ```js
+  function createStore(initFn) {
+    let listeners = [];
+    let state;
+  
+    const getState = () => state;
+    const merge = patch => {
+      state = { ...state, ...patch };
+      listeners.forEach(fn => fn(state));
+    };
+  
+    // initialize your state/store object
+    state = initFn(getState, merge);
+  
+    return listener => {
+        listeners.push(listener);
+        // return an unsubscribe handle
+        return () => {
+          listeners = listeners.filter(l => l !== listener);
+        };
+    };
+  }
   ```
