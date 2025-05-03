@@ -67,10 +67,13 @@ Those steps can be incorporated in the following way to improve the library. It 
     state = initFn(getState, merge);
   
     return (selector, dependencies) => {
-    	// to make changes in selected slice, we have to use provided methods in the store we wrote ourselves. Hence const below
+    	// to make changes in selected slice,
+      // we have to use provided methods in the store we wrote ourselves.
+      // Hence const below
     	const selected = selector(state)
-    	// Here, selected could be a method.
-      // The way React works, if it sees the method inside useState hook it evaluates and its result becomes the value of the state.
+      // Here, selected could be a method.
+      // The way React works, if it sees the method inside useState hook
+      // it evaluates and its result becomes the value of the state.
       // We don't want that. Hence () => selected
     	const [slice, setSlice] = useState(() => selected)
     	
