@@ -45,6 +45,8 @@ Firstly, let's forget about React and write a simple pub/sub library that gives 
     };
   }
   ```
+
+
 We now have basic ingredients: a store for internal state, a way to update/patch that state and a listener system. Zustand build on that foundation and adapts it for React, using Hooks. Let's go and do just that. The first version we will accomplish will contain a subtle bug, which we will then try to fix. That bug is connected with closures and how react store states and has lot's of teaching purpose. These are steps we are going to take:
 
 - a given React component might not need all the data in the given store, so we give the user possibility to specify that selector. Also we might need to only listen to the changes in the story only if the specific dependencies are changed. This way we gain in efficiency. To sum up, our Hook should accept two parameters, *selector* function and *dependencies* list.
