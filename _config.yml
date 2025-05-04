@@ -1,3 +1,6 @@
 title: Dev notes
 description: Peeking under the hood of popular technologies
 theme: minima
+highlighter: rouge
+rouge:
+  tab_width: 2
