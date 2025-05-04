@@ -130,7 +130,7 @@ The idea is simple: we use the previous slice as our base, then for each top-lev
     	
     	useEffect(() => {
     		const listener = () => {
-    			if (typeof slice === 'object' and !Array.isArray(selected)) {
+    			if (typeof slice === 'object' && !Array.isArray(selected)) {
     				newSlice = Object.entries(slice).reduce(
     					(acc, [key, value]) => (slice[key] !== value ? { ...acc, [key]: value} : acc),
     					slice
