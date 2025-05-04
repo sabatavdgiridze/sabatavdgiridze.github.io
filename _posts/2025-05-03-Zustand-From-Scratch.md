@@ -151,3 +151,48 @@ The idea is simple: we use the previous slice as our base, then for each top-lev
     }
   }
 ```
+
+Now, what is the bug we have been talking about? The listener we changed looks at the previous slice and re-renders the component only if the new slice is different. However, it still points to the slice which was up-to-date only when the useEffect hook was first run. As states in React are immutable, the data this particular slice was looking at was never updated even though the state changed. To remedy this situation, we add a new useState hook that checks if the slice is ever changed and accordingly updates the also added reference created using **useRef**. This combination is pretty common in development and solves stale closure problems in React. So the final code has the following form:
+
+```js
+  function createStore(initFn) {
+    let listeners = [];
+    let state;
+  
+    const getState = () => state;
+    const merge = patch => {
+      state = { ...state, ...patch };
+      listeners.forEach(fn => fn(state));
+    };
+  
+    // initialize your state/store object
+    state = initFn(getState, merge);
+  
+    return (selector, dependencies) => {
+    	const selected = selector(state)
+    	const [slice, setSlice] = useState(() => selected)
+      const sliceRef = useRef()
+      useEffect(() => (sliceRef.current = slice), [slice]);
+    	useEffect(() => {
+          const listener = () => {
+            let newSlice = selector(state);
+            if (typeof newSlice === 'object' && !Array.isArray(newSlice)) {
+              newSlice = Object.entries(newSlice).reduce(
+              (acc, [key, value]) => (sliceRef.current[key] !== value ? { ...acc, [key]: value} : acc),
+                sliceRef.current
+              )
+            }
+            if (sliceRef.current !== newSlice) {
+              setSlice(() => newSlice);
+            }
+          }
+      		
+          listeners.push(listener);
+          return () => {
+            listeners = listeners.filter(l => l !== listener)
+          }
+        }, dependencies || [selector])
+      	return selected;
+    }
+  }
+```
