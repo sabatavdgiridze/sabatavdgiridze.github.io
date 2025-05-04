@@ -191,8 +191,8 @@ Now, what is the bug we have been talking about? The listener we changed looks a
           return () => {
             listeners = listeners.filter(l => l !== listener)
           }
-        }, dependencies || [selector])
-      	return selected;
+      }, dependencies || [selector])
+      return selected;
     }
   }
 ```
