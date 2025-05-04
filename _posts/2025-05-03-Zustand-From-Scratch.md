@@ -196,3 +196,5 @@ Now, what is the bug we have been talking about? The listener we changed looks a
     }
   }
 ```
+
+That is all! We managed to implement a React store similar to Zustand and see that it is not that hard to do once you understand basic principles behind it.
