@@ -169,8 +169,8 @@ Now, what is the bug we have been talking about? The listener we changed looks a
     state = initFn(getState, merge);
   
     return (selector, dependencies) => {
-    	const selected = selector(state)
-    	const [slice, setSlice] = useState(() => selected)
+      const selected = selector(state)
+      const [slice, setSlice] = useState(() => selected)
       const sliceRef = useRef()
       useEffect(() => (sliceRef.current = slice), [slice]);
     	useEffect(() => {
