@@ -96,3 +96,58 @@ Those steps can be incorporated in the following way to improve the library. It 
   }
 ```
 
+To make this more efficient, we only re-render the component when the new slice differs from the previous one. We do this with a shallow diff—comparing only top-level keys. That means their values must reference the **same** object in memory for each matching key in two object literals. It’s stricter than necessary (you could have the same data in different memory locations), but deep diffs are expensive. This strikes a practical balance between accuracy and performance. The shallow diff is implemented in Zustand library in a very slick way:
+```js
+if (typeof slice === 'object' and !Array.isArray(selected)) {
+  newSlice = Object.entries(slice).reduce(
+    (acc, [key, value]) => (slice[key] !== value ? { ...acc, [key]: value} : acc),
+    slice
+  )
+}
+if (slice !== newSlice) {
+  setSlice(() => newSlice);
+}
+```
+The idea is simple: we use the previous slice as our base, then for each top-level key we check whether the new value points to the **same** object in memory. As soon as one doesn’t match, we spread the base into a fresh object—giving us a new reference—so that the final slice !== selected check will catch the change. Very clever if you ask me! So the almost final version is this (it has a subtle bug, can you notice it?)
+
+```js
+  function createStore(initFn) {
+    let listeners = [];
+    let state;
+  
+    const getState = () => state;
+    const merge = patch => {
+      state = { ...state, ...patch };
+      listeners.forEach(fn => fn(state));
+    };
+  
+    // initialize your state/store object
+    state = initFn(getState, merge);
+  
+    return (selector, dependencies) => {
+    	const selected = selector(state)
+    	const [slice, setSlice] = useState(() => selected)
+    	
+    	useEffect(() => {
+    		const listener = () => {
+    			if (typeof slice === 'object' and !Array.isArray(selected)) {
+    				newSlice = Object.entries(slice).reduce(
+    					(acc, [key, value]) => (slice[key] !== value ? { ...acc, [key]: value} : acc),
+    					slice
+    				)
+    			}
+    			if (slice !== newSlice) {
+    				setSlice(() => newSlice);
+    			}
+    		}
+    		
+    		listeners.push(listener);
+    		// unsubscribe method given to useEffect
+    		return () => {
+    			listeners = listeners.filter(l => l !== listener)
+    		}
+    	}, dependencies || [selector])
+    	return selected;
+    }
+  }
+```
