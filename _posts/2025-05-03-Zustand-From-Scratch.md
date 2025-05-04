@@ -129,18 +129,18 @@ The idea is simple: we use the previous slice as our base, then for each top-lev
     	const [slice, setSlice] = useState(() => selected)
     	
     	useEffect(() => {
-    		const listener = () => {
+        const listener = () => {
           let newSlice = selector(state);
-    			if (typeof slice === 'object' && !Array.isArray(selected)) {
-    				newSlice = Object.entries(slice).reduce(
-    					(acc, [key, value]) => (slice[key] !== value ? { ...acc, [key]: value} : acc),
-    					slice
-    				)
-    			}
-    			if (slice !== newSlice) {
-    				setSlice(() => newSlice);
-    			}
-    		}
+          if (typeof slice === 'object' && !Array.isArray(selected)) {
+            newSlice = Object.entries(slice).reduce(
+            (acc, [key, value]) => (slice[key] !== value ? { ...acc, [key]: value} : ACC),
+              slice
+            )
+          }
+          if (slice !== newSlice) {
+            setSlice(() => newSlice);
+          }
+        }
     		
     		listeners.push(listener);
     		// unsubscribe method given to useEffect
