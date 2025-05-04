@@ -142,12 +142,11 @@ The idea is simple: we use the previous slice as our base, then for each top-lev
           }
         }
     		
-    		listeners.push(listener);
-    		// unsubscribe method given to useEffect
-    		return () => {
-    			listeners = listeners.filter(l => l !== listener)
-    		}
-    	}, dependencies || [selector])
+        listeners.push(listener);
+        return () => {
+          listeners = listeners.filter(l => l !== listener)
+        }
+      }, dependencies || [selector])
     	return selected;
     }
   }
