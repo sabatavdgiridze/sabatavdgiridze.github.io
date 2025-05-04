@@ -173,7 +173,7 @@ Now, what is the bug we have been talking about? The listener we changed looks a
       const [slice, setSlice] = useState(() => selected)
       const sliceRef = useRef()
       useEffect(() => (sliceRef.current = slice), [slice]);
-    	useEffect(() => {
+      useEffect(() => {
           const listener = () => {
             let newSlice = selector(state);
             if (typeof newSlice === 'object' && !Array.isArray(newSlice)) {
